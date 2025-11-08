@@ -201,27 +201,35 @@
     </div>
   </div>
 <script>
-  document.querySelector('form').addEventListener('submit', async (e) => {
-    e.preventDefault();
+document.getElementById('loginForm').addEventListener('submit', async (e) => {
+  e.preventDefault(); // voorkomt dat form een GET request doet
 
-    const username = document.getElementById('username').value;
-    const password = document.getElementById('password').value;
+  const username = document.getElementById('username').value;
+  const password = document.getElementById('password').value;
 
-    const res = await fetch('/api/login', {
+  try {
+    const res = await fetch('/api/login', { // geen .js
       method: 'POST',
       headers: { 'Content-Type': 'application/json' },
       body: JSON.stringify({ username, password })
     });
 
+    console.log('Status:', res.status);
     const data = await res.json();
+    console.log('Response:', data);
 
     if (data.success) {
       window.location.href = '/tetris.html';
     } else {
       alert('Ongeldige inloggegevens');
     }
-  });
+  } catch (err) {
+    console.error('Fetch error:', err);
+    alert('Kan server niet bereiken.');
+  }
+});
 </script>
+
 </body>
 </html>
 
