@@ -125,6 +125,21 @@
       '#FF8E0D', '#FFE138', '#3877FF'
     ];
 
+    function updateLeaderboard() {
+    const savedScores = JSON.parse(localStorage.getItem('tetrisHighScores')) || {};
+    const sortedScores = Object.entries(savedScores)
+        .sort((a, b) => b[1] - a[1])
+        .slice(0, 5); // Top 5
+
+    const leaderboardList = document.getElementById('leaderboard-list');
+    leaderboardList.innerHTML = ''; // leegmaken
+    sortedScores.forEach(([user, score]) => {
+        const li = document.createElement('li');
+        li.textContent = `${user}: ${score}`;
+        leaderboardList.appendChild(li);
+    });
+}
+
     function createMatrix(w, h) {
       const matrix = [];
       while(h--) matrix.push(new Array(w).fill(0));
@@ -177,6 +192,7 @@
         arena.forEach(row=>row.fill(0));
         player.score=0;
         updateScore();
+        updateLeaderboard();
       }
     }
 
@@ -246,6 +262,7 @@
       if(dropCounter>dropInterval) playerDrop();
       draw();
       requestAnimationFrame(update);
+      updateLeaderboard();
     }
 
     document.addEventListener('keydown', event=>{
@@ -263,6 +280,7 @@
   </script>
 </body>
 </html>
+
 
 
 
