@@ -14,18 +14,14 @@
     display: flex;
     justify-content: center;
     align-items: center;
+    overflow: hidden;
   }
 
-  #container {
-    display: flex;
-    align-items: center;
-    gap: 40px;
-  }
-
-  #game-area {
+  #game-container {
     display: flex;
     flex-direction: column;
     align-items: center;
+    text-align: center;
   }
 
   h1 {
@@ -34,7 +30,6 @@
     -webkit-background-clip: text;
     -webkit-text-fill-color: transparent;
     margin-bottom: 10px;
-    text-align: center;
   }
 
   #top-bar {
@@ -42,6 +37,7 @@
     align-items: center;
     gap: 10px;
     margin-bottom: 10px;
+    justify-content: center;
   }
 
   #score {
@@ -49,7 +45,7 @@
     color: #9aa4b2;
   }
 
-  button, input {
+  button {
     background: linear-gradient(90deg, #3a9bdc, #6dc1ff);
     border: none;
     border-radius: 6px;
@@ -61,14 +57,9 @@
     transition: transform 0.15s ease, box-shadow 0.2s ease;
   }
 
-  button:hover, input:hover {
+  button:hover {
     transform: scale(1.05);
     box-shadow: 0 0 8px rgba(61,130,255,0.4);
-  }
-
-  input {
-    color: #0a0f18;
-    text-align: center;
   }
 
   canvas {
@@ -78,7 +69,12 @@
   }
 
   #leaderboard {
+    position: fixed;
+    top: 50%;
+    right: 20px;
+    transform: translateY(-50%);
     width: 150px;
+    text-align: left;
     color: #9aa4b2;
     font-size: 14px;
   }
@@ -97,16 +93,13 @@
     margin-top: 15px;
     font-size: 13px;
     color: #9aa4b2;
-    text-align: center;
   }
 </style>
 </head>
 <body>
-<div id="container">
-  <div id="game-area">
+  <div id="game-container">
     <h1>Tetris</h1>
     <div id="top-bar">
-      <input type="text" id="username" placeholder="Naam" />
       <div id="score">Score: 0</div>
       <button id="start-btn">▶ Start</button>
     </div>
@@ -118,7 +111,6 @@
     <h2>Leaderboard</h2>
     <ol id="leaderboard-list"></ol>
   </div>
-</div>
 
 <script>
 const canvas = document.getElementById('game');
@@ -126,7 +118,9 @@ const context = canvas.getContext('2d');
 const scoreElement = document.getElementById('score');
 const startBtn = document.getElementById('start-btn');
 const leaderboardList = document.getElementById('leaderboard-list');
-const usernameInput = document.getElementById('username');
+
+// VUL HIER DE USERNAME VAN DE LOGGED IN USER IN
+let currentUser = "SpelerNaam"; // <-- Vervang dit dynamisch vanuit login
 
 const ROWS = 20;
 const COLS = 12;
@@ -141,7 +135,6 @@ const colors = [
 
 let arena, player, dropCounter, lastTime, dropInterval;
 let gameActive = false;
-let currentUser = '';
 
 function createMatrix(w, h){
   const matrix = [];
@@ -303,7 +296,6 @@ document.addEventListener('keydown', event=>{
 });
 
 startBtn.addEventListener('click', ()=>{
-  if(usernameInput.value.trim()!=='') currentUser=usernameInput.value.trim();
   arena=createMatrix(COLS,ROWS);
   player={pos:{x:0,y:0},matrix:null,score:0};
   dropCounter=0;
