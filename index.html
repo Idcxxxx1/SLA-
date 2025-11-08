@@ -200,6 +200,28 @@
       Nog geen account? <a href="#">Registreer hier</a>
     </div>
   </div>
+<script>
+  document.querySelector('form').addEventListener('submit', async (e) => {
+    e.preventDefault();
+
+    const username = document.getElementById('username').value;
+    const password = document.getElementById('password').value;
+
+    const res = await fetch('/api/login', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ username, password })
+    });
+
+    const data = await res.json();
+
+    if (data.success) {
+      window.location.href = '/tetris.html';
+    } else {
+      alert('Ongeldige inloggegevens');
+    }
+  });
+</script>
 </body>
 </html>
 
