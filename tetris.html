@@ -97,15 +97,19 @@
   <div id="paused">Gepauzeerd</div>
   <footer>Pijltjes: ← → bewegen, ↑ draaien, ↓ droppen</footer>
 
-<script>
+  <script>
 const canvas = document.getElementById('game');
 const context = canvas.getContext('2d');
 const scoreElement = document.getElementById('score');
-context.scale(20, 20); // blokgrootte
+context.scale(20, 20); // schaal voor blokken
 
-// Board
+// Arena & speler
 const arena = createMatrix(12, 20);
-const player = { pos: {x: 0, y: 0}, matrix: null, score: 0 };
+const player = {
+  pos: { x: 0, y: 0 },
+  matrix: null,
+  score: 0
+};
 
 // Kleuren van de blokken
 const colors = [
@@ -114,37 +118,40 @@ const colors = [
   '#FF8E0D', '#FFE138', '#3877FF'
 ];
 
-// Helper: lege matrix maken
+// Helpers
 function createMatrix(w, h) {
   const matrix = [];
-  while (h--) matrix.push(new Array(w).fill(0));
+  while(h--) matrix.push(new Array(w).fill(0));
   return matrix;
 }
 
 // Blokken
 function createPiece(type) {
-  if (type === 'I') return [[0,1,0,0],[0,1,0,0],[0,1,0,0],[0,1,0,0]];
-  if (type === 'L') return [[0,2,0],[0,2,0],[0,2,2]];
-  if (type === 'J') return [[0,3,0],[0,3,0],[3,3,0]];
-  if (type === 'O') return [[4,4],[4,4]];
-  if (type === 'Z') return [[5,5,0],[0,5,5],[0,0,0]];
-  if (type === 'S') return [[0,6,6],[6,6,0],[0,0,0]];
-  if (type === 'T') return [[0,7,0],[7,7,7],[0,0,0]];
+  switch(type) {
+    case 'I': return [[0,1,0,0],[0,1,0,0],[0,1,0,0],[0,1,0,0]];
+    case 'L': return [[0,2,0],[0,2,0],[0,2,2]];
+    case 'J': return [[0,3,0],[0,3,0],[3,3,0]];
+    case 'O': return [[4,4],[4,4]];
+    case 'Z': return [[5,5,0],[0,5,5],[0,0,0]];
+    case 'S': return [[0,6,6],[6,6,0],[0,0,0]];
+    case 'T': return [[0,7,0],[7,7,7],[0,0,0]];
+  }
 }
 
-// Controleer botsing
+// Botsing
 function collide(arena, player) {
   const [m, o] = [player.matrix, player.pos];
   for (let y = 0; y < m.length; y++) {
     for (let x = 0; x < m[y].length; x++) {
-      if (m[y][x] !== 0 &&
-          (arena[y + o.y] && arena[y + o.y][x + o.x]) !== 0) return true;
+      if (m[y][x] !== 0 && (arena[y + o.y] && arena[y + o.y][x + o.x]) !== 0) {
+        return true;
+      }
     }
   }
   return false;
 }
 
-// Voeg player toe aan arena
+// Voeg speler toe aan arena
 function merge(arena, player) {
   player.matrix.forEach((row, y) => {
     row.forEach((value, x) => {
@@ -164,7 +171,7 @@ function rotate(matrix, dir) {
   else matrix.reverse();
 }
 
-// Nieuwe blok
+// Reset speler
 function playerReset() {
   const pieces = 'TJLOSZI';
   player.matrix = createPiece(pieces[Math.floor(Math.random() * pieces.length)]);
@@ -189,13 +196,12 @@ function arenaSweep() {
   }
 }
 
-// Beweeg speler
+// Bewegingen
 function playerMove(dir) {
   player.pos.x += dir;
   if (collide(arena, player)) player.pos.x -= dir;
 }
 
-// Drop speler
 function playerDrop() {
   player.pos.y++;
   if (collide(arena, player)) {
@@ -208,7 +214,6 @@ function playerDrop() {
   dropCounter = 0;
 }
 
-// Draai speler
 function playerRotate(dir) {
   const pos = player.pos.x;
   let offset = 1;
@@ -254,7 +259,6 @@ function updateScore() {
 let dropCounter = 0;
 let dropInterval = 1000;
 let lastTime = 0;
-
 function update(time = 0) {
   const deltaTime = time - lastTime;
   lastTime = time;
@@ -282,5 +286,6 @@ update();
 
 </body>
 </html>
+
 
 
